@@ -10,13 +10,14 @@
 // ==/UserScript==
 
 var max = 50;
+var timeout = 100;
 
 function error(){
   //alert("No se pueden encontrar los elementos correspondientes, el script no funcionará.");
 }
 
 function neutralize_modal_open(){
-  console.log("Intentando neutralize_modal_open...");
+  //console.log("Intentando neutralize_modal_open...");
   /* Neutralize the "modal-open" class effect from anywhere */
   element_class = "modal-open";
   var elements = document.getElementsByClassName(element_class);
@@ -26,7 +27,7 @@ function neutralize_modal_open(){
   }
   
   while(count--){
-    console.log("Neutralizando el efecto de la clase modal-open...");
+    //console.log("Neutralizando el efecto de la clase modal-open...");
     var el = elements[count];
     el.style.overflow = "auto";
   }
@@ -34,7 +35,7 @@ function neutralize_modal_open(){
 }
 
 function remove_modal_open(){
-  console.log("Intentando remove_modal_open...");
+  //console.log("Intentando remove_modal_open...");
   /* Remove the "modal-open" class from anywhere */
   element_class = "modal-open";
   var elements = document.getElementsByClassName(element_class);
@@ -44,7 +45,7 @@ function remove_modal_open(){
   }
   
   while(count--){
-    console.log("Eliminando clase modal-open...");
+    //console.log("Eliminando clase modal-open...");
     var el = elements[count];
     el.classList.remove(element_class);
   }
@@ -52,7 +53,7 @@ function remove_modal_open(){
 }
 
 function hide_login_signwall(){
-  console.log("Intentando hide_login_signwall...");
+  //console.log("Intentando hide_login_signwall...");
   /* Remove the "login-signwall" element */
   element_id = "login-signwall";
   var login_signwall = document.getElementById('login-signwall');
@@ -60,14 +61,14 @@ function hide_login_signwall(){
     return false;
   }
   
-  console.log("Escondiendo signwall...");
+  //console.log("Escondiendo signwall...");
   var modal_scrollable = login_signwall.parentNode.parentNode.parentNode;
   modal_scrollable.setAttribute("style","display: none !important;");
   return true;
 }
 
 function remove_login_signwall(){
-  console.log("Intentando remove_login_signwall...");
+  //console.log("Intentando remove_login_signwall...");
   /* Remove the "login-signwall" element */
   element_id = "login-signwall";
   var login_signwall = document.getElementById('login-signwall');
@@ -75,7 +76,7 @@ function remove_login_signwall(){
     return false;
   }
   
-  console.log("Eliminando signwall...");
+  //console.log("Eliminando signwall...");
   var modal_scrollable = login_signwall.parentNode.parentNode.parentNode;
   modal_scrollable.parentNode.removeChild(modal_scrollable);
   return true;
@@ -88,8 +89,24 @@ function remove_misc_1(){
     return false;
   }
 
-  console.log("Eliminando misc...");
+  //console.log("Eliminando misc...");
   ads.parentNode.removeChild(ads);
+  return true;
+}
+
+function hide_misc_2(){
+  /* Misc2 */
+  element_class = "banner";
+  var elements = document.getElementsByClassName(element_class);
+  var count = elements.length;
+  if (!count) {
+    return false;
+  }
+  while(count--){
+    //console.log("Escondiendo misc2...");
+    var el = elements[count];
+    el.style.display = "none";
+  }
   return true;
 }
 
@@ -102,23 +119,23 @@ function remove_misc_2(){
     return false;
   }
   while(count--){
-    console.log("Eliminando misc...");
+    //console.log("Eliminando misc2...");
     var el = elements[count];
     el.parentNode.removeChild(el);
   }
   return true;
 }
 
-function tryNumber(func,times){
+function tryNumber(func,times,timeout){
   func();
   if(times){
     window.setTimeout(function(){
       tryNumber(func,times-1);
-    }, 100);
+    }, timeout);
   }
 }
 
-function tryMax(func,times){
+function tryMax(func,times,timeout){
   if(func()){
     return true;
   }
@@ -128,22 +145,23 @@ function tryMax(func,times){
   else {
     window.setTimeout(function(){
       tryMax(func,times-1);
-    }, 100);
+    }, timeout);
   }
 }
 
-function tryInfinite(func){
+function tryInfinite(func,timeout){
   func();
   window.setTimeout(function(){
     tryInfinite(func);
-  },500);
+  }, timeout);
 }
 
-tryNumber(neutralize_modal_open,max);
-tryNumber(hide_login_signwall,max);
+tryNumber(neutralize_modal_open,max/5,timeout*5);
+tryNumber(hide_login_signwall,max/5,timeout*5);
+tryNumber(hide_misc_2,max/5,timeout*5);
 window.onload = function () {
-  tryMax(remove_modal_open,max);
-  tryMax(remove_login_signwall,max);
-  tryMax(remove_misc_1,max);
-  tryInfinite(remove_misc_2);
+  tryMax(remove_modal_open,max,timeout);
+  tryMax(remove_login_signwall,max,timeout);
+  tryMax(remove_misc_1,max,timeout);
+  tryInfinite(remove_misc_2,timeout*5);
 }
