@@ -12,7 +12,7 @@
 var max = 100;
 
 function error(){
-  alert("No se pueden encontrar los elementos correspondientes, el script no funcionará.");
+  //alert("No se pueden encontrar los elementos correspondientes, el script no funcionará.");
 }
 
 function remove_modal_open(){
