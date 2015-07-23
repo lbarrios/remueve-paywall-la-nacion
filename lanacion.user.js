@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         La Nacion - Remover Registro
 // @namespace    http://lbarrios.com.ar/
-// @version      0.1
+// @version      0.2
 // @description  Remueve el recuadro de registro que aparece al intentar leer una noticia
 // @author       lbarrios@lbarrios.com.ar
 // @match        http://*.lanacion.com.ar/*
@@ -9,13 +9,32 @@
 // @run-at       document-end
 // ==/UserScript==
 
-var max = 100;
+var max = 50;
 
 function error(){
   //alert("No se pueden encontrar los elementos correspondientes, el script no funcionará.");
 }
 
+function neutralize_modal_open(){
+  console.log("Intentando neutralize_modal_open...");
+  /* Neutralize the "modal-open" class effect from anywhere */
+  element_class = "modal-open";
+  var elements = document.getElementsByClassName(element_class);
+  var count = elements.length;
+  if (!count) {
+    return false;
+  }
+  
+  while(count--){
+    console.log("Neutralizando el efecto de la clase modal-open...");
+    var el = elements[count];
+    el.style.overflow = "auto";
+  }
+  return true;
+}
+
 function remove_modal_open(){
+  console.log("Intentando remove_modal_open...");
   /* Remove the "modal-open" class from anywhere */
   element_class = "modal-open";
   var elements = document.getElementsByClassName(element_class);
@@ -25,14 +44,30 @@ function remove_modal_open(){
   }
   
   while(count--){
-    console.log("Eliminando clase modal...");
+    console.log("Eliminando clase modal-open...");
     var el = elements[count];
     el.classList.remove(element_class);
   }
   return true;
 }
 
+function hide_login_signwall(){
+  console.log("Intentando hide_login_signwall...");
+  /* Remove the "login-signwall" element */
+  element_id = "login-signwall";
+  var login_signwall = document.getElementById('login-signwall');
+  if (typeof login_signwall==='undefined' || login_signwall===null) {
+    return false;
+  }
+  
+  console.log("Escondiendo signwall...");
+  var modal_scrollable = login_signwall.parentNode.parentNode.parentNode;
+  modal_scrollable.setAttribute("style","display: none !important;");
+  return true;
+}
+
 function remove_login_signwall(){
+  console.log("Intentando remove_login_signwall...");
   /* Remove the "login-signwall" element */
   element_id = "login-signwall";
   var login_signwall = document.getElementById('login-signwall');
@@ -66,13 +101,21 @@ function remove_misc_2(){
   if (!count) {
     return false;
   }
-  console.log(elements);
   while(count--){
     console.log("Eliminando misc...");
     var el = elements[count];
     el.parentNode.removeChild(el);
   }
   return true;
+}
+
+function tryNumber(func,times){
+  func();
+  if(times){
+    window.setTimeout(function(){
+      tryNumber(func,times-1);
+    }, 100);
+  }
 }
 
 function tryMax(func,times){
@@ -96,6 +139,8 @@ function tryInfinite(func){
   },500);
 }
 
+tryNumber(neutralize_modal_open,max);
+tryNumber(hide_login_signwall,max);
 window.onload = function () {
   tryMax(remove_modal_open,max);
   tryMax(remove_login_signwall,max);
