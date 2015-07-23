@@ -25,20 +25,22 @@ function remove_modal_open(){
   }
   
   while(count--){
+    console.log("Eliminando clase modal...");
     var el = elements[count];
-    el.classList.remove(element_class)
+    el.classList.remove(element_class);
   }
   return true;
 }
 
 function remove_login_signwall(){
   /* Remove the "login-signwall" element */
-  element_id = "login-signwall"
+  element_id = "login-signwall";
   var login_signwall = document.getElementById('login-signwall');
-  if (typeof login_signwall === 'undefined') {
+  if (typeof login_signwall==='undefined' || login_signwall===null) {
     return false;
   }
   
+  console.log("Eliminando signwall...");
   var modal_scrollable = login_signwall.parentNode.parentNode.parentNode;
   modal_scrollable.parentNode.removeChild(modal_scrollable);
   return true;
@@ -47,10 +49,11 @@ function remove_login_signwall(){
 function remove_misc_1(){
   /* Misc */
   ads = document.getElementById("grv_Ads_parent");
-  if (typeof ads === 'undefined') {
+  if (typeof ads==='undefined' || ads===null) {
     return false;
   }
 
+  console.log("Eliminando misc...");
   ads.parentNode.removeChild(ads);
   return true;
 }
@@ -63,8 +66,9 @@ function remove_misc_2(){
   if (!count) {
     return false;
   }
-  
+  console.log(elements);
   while(count--){
+    console.log("Eliminando misc...");
     var el = elements[count];
     el.parentNode.removeChild(el);
   }
