@@ -9,76 +9,71 @@
 // @run-at       document-end
 // ==/UserScript==
 
-var max = 50;
-var timeout = 100;
+var max = 5;
+var timeout = 500;
+//var login_signwall_id = "login-signwall";
+var login_signwall_id = "iframe-registracion";
+var login_signwalls_class = "login";
+
+function insertCss( code ) {
+  var style = document.createElement('style');
+  style.type = 'text/css';
+  if (style.styleSheet) {
+    // IE
+    style.styleSheet.cssText = code;
+  } else {
+    // Other browsers
+    style.innerHTML = code;
+  }
+  document.getElementsByTagName("head")[0].appendChild( style );
+}
 
 function error(){
-  //alert("No se pueden encontrar los elementos correspondientes, el script no funcionará.");
+  console.log("No se pueden encontrar los elementos correspondientes, el script no funcionará.");
 }
 
-function neutralize_modal_open(){
-  //console.log("Intentando neutralize_modal_open...");
-  /* Neutralize the "modal-open" class effect from anywhere */
-  element_class = "modal-open";
-  var elements = document.getElementsByClassName(element_class);
-  var count = elements.length;
-  if (!count) {
+function remove_id(element_id) {
+  // console.log("Intentando remover "+element_id);
+  var element = document.getElementById(element_id);
+  if (typeof element==='undefined' || element===null) {
+    // console.log("No se encuentra "+element_id);
     return false;
   }
-  
-  while(count--){
-    //console.log("Neutralizando el efecto de la clase modal-open...");
-    var el = elements[count];
-    el.style.overflow = "auto";
-  }
-  return true;
-}
-
-function remove_modal_open(){
-  //console.log("Intentando remove_modal_open...");
-  /* Remove the "modal-open" class from anywhere */
-  element_class = "modal-open";
-  var elements = document.getElementsByClassName(element_class);
-  var count = elements.length;
-  if (!count) {
-    return false;
-  }
-  
-  while(count--){
-    //console.log("Eliminando clase modal-open...");
-    var el = elements[count];
-    el.classList.remove(element_class);
-  }
-  return true;
+  // console.log(element_id+" encontrado, eliminando...");
+  element.remove();
 }
 
 function hide_login_signwall(){
-  //console.log("Intentando hide_login_signwall...");
+  // console.log("Intentando hide_login_signwall...");
   /* Remove the "login-signwall" element */
-  element_id = "login-signwall";
-  var login_signwall = document.getElementById('login-signwall');
-  if (typeof login_signwall==='undefined' || login_signwall===null) {
+  var login_signwalls = document.getElementsByClassName(login_signwalls_class);
+  if (typeof login_signwalls==='undefined' || login_signwalls===null || !login_signwalls.length) {
     return false;
   }
   
-  //console.log("Escondiendo signwall...");
-  var modal_scrollable = login_signwall.parentNode.parentNode.parentNode;
-  modal_scrollable.setAttribute("style","display: none !important;");
+  // console.log("Escondiendo signwalls...");
+  for (var i = 0; i < login_signwalls.length; i++) {
+    login_signwalls[i].setAttribute("style","display: none !important;");
+  };
+  insertCss("."+login_signwalls_class+"{display: none !important;}");
   return true;
 }
 
 function remove_login_signwall(){
-  //console.log("Intentando remove_login_signwall...");
+  // console.log("Intentando remove_login_signwall...");
+  remove_id('responsive');
   /* Remove the "login-signwall" element */
-  element_id = "login-signwall";
-  var login_signwall = document.getElementById('login-signwall');
+  var login_signwall = document.getElementById(login_signwall_id);
   if (typeof login_signwall==='undefined' || login_signwall===null) {
     return false;
   }
   
-  //console.log("Eliminando signwall...");
-  var modal_scrollable = login_signwall.parentNode.parentNode.parentNode;
-  modal_scrollable.parentNode.removeChild(modal_scrollable);
+  // console.log("Eliminando signwall...");
+  var modal_scrollable = login_signwall;
+  while(modal_scrollable.parentNode.tagName!="BODY"){
+    modal_scrollable = modal_scrollable.parentNode;
+  }
+  modal_scrollable.remove();
   return true;
 }
 
@@ -89,7 +84,7 @@ function remove_misc_1(){
     return false;
   }
 
-  //console.log("Eliminando misc...");
+  // console.log("Eliminando misc...");
   ads.parentNode.removeChild(ads);
   return true;
 }
@@ -103,7 +98,7 @@ function hide_misc_2(){
     return false;
   }
   while(count--){
-    //console.log("Escondiendo misc2...");
+    // console.log("Escondiendo misc2...");
     var el = elements[count];
     el.style.display = "none";
   }
@@ -119,7 +114,7 @@ function remove_misc_2(){
     return false;
   }
   while(count--){
-    //console.log("Eliminando misc2...");
+    // console.log("Eliminando misc2...");
     var el = elements[count];
     el.parentNode.removeChild(el);
   }
@@ -156,12 +151,14 @@ function tryInfinite(func,timeout){
   }, timeout);
 }
 
-tryNumber(neutralize_modal_open,max/5,timeout*5);
-tryNumber(hide_login_signwall,max/5,timeout*5);
-tryNumber(hide_misc_2,max/5,timeout*5);
+// tryNumber(neutralize_modal_open,max/5,timeout*5);
+// tryNumber(hide_login_signwall,max/5,timeout*5);
+// tryNumber(hide_misc_2,max/5,timeout*5);
+hide_login_signwall();
 window.onload = function () {
-  tryMax(remove_modal_open,max,timeout);
+  remove_id("responsive");
+  //tryMax(remove_modal_open,max,timeout);
   tryMax(remove_login_signwall,max,timeout);
-  tryMax(remove_misc_1,max,timeout);
-  tryInfinite(remove_misc_2,timeout*5);
+  //tryMax(remove_misc_1,max,timeout);
+  //tryInfinite(remove_misc_2,timeout*5);
 }
