@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         La Nacion - Remover Registro
 // @namespace    http://lbarrios.com.ar/
-// @version      0.2
+// @version      0.3
 // @description  Remueve el recuadro de registro que aparece al intentar leer una noticia
 // @author       lbarrios@lbarrios.com.ar
 // @match        http://*.lanacion.com.ar/*
